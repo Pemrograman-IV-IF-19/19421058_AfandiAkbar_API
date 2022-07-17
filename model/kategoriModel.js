@@ -1,6 +1,6 @@
 const mongoose = require ('mongoose')
 
-const kategoriModel = mongoose.Schema({
+const kategoriModel = new mongoose.Schema({
     namaKategori: {
         type: String
     },

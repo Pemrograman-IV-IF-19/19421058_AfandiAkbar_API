@@ -4,7 +4,7 @@ const bCrypt = require('bcrypt')
 exports.registrasiUser = (data) =>
 new Promise(async(resolve, reject) => {
     const salt = bCrypt.genSaltSync(10)
-    const encrypt = bCrypt.hashSync(data.password, salt)
+    const encrypt = await bCrypt.hashSync(data.password, salt)
     Object.assign(data,{
         password: encrypt
     })
@@ -19,7 +19,6 @@ new Promise(async(resolve, reject) => {
         } else {
             await userModel.create(data)
             .then(() =>{
-                console.log("berhasil")
                 resolve({
                     status: true,
                     msg: "Berhasil Registrasi"

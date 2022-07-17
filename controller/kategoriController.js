@@ -1,11 +1,11 @@
 const { model } = require('mongoose')
-const modelKategori = require('../model/kategoriModel')
+const kategoriModel = require('../model/kategoriModel')
 const mongoose = require('mongoose')
 const objectId = mongoose.Types.ObjectId
 
 exports.inputKategori = (data) =>
     new Promise(async(resolve, reject) => {
-        await modelKategori.create(data)
+        await kategoriModel.create(data)
             .then(() => {
                 resolve ({
                     status: true,
@@ -21,7 +21,7 @@ exports.inputKategori = (data) =>
 
 exports.getAllKategori = () =>
     new Promise(async(resolve, reject) => {
-        modelKategori.find({})
+        kategoriModel.find({})
             .then(dataKategori => {
                 if (dataKategori.length > 0) {
                     resolve({
@@ -45,7 +45,7 @@ exports.getAllKategori = () =>
 
 exports.getKategoriByName = (name) =>
     new Promise(async(resolve, reject) => {
-        modelKategori.findOne({ namaKategori: name })
+        kategoriModel.findOne({ namaKategori: name })
             .then(dataKategori => {
                 if (dataKategori) {
                     resolve({
@@ -70,7 +70,7 @@ exports.getKategoriByName = (name) =>
 
 exports.updateKategori = (id, data) =>
     new Promise(async(resolve, reject) => {
-        modelKategori.updateOne({ _id: objectId(id) }, data)
+        kategoriModel.updateOne({ _id: objectId(id) }, data)
             .then(() => {
                 resolve ({
                     status: true,
@@ -86,7 +86,7 @@ exports.updateKategori = (id, data) =>
 
 exports.deleteKategori = (id) =>
     new Promise(async(resolve, reject) => {
-        modelKategori.deleteOne({ _id: objectId(id) })
+        kategoriModel.deleteOne({ _id: objectId(id) })
             .then(() => {
                 resolve ({
                     status: true,

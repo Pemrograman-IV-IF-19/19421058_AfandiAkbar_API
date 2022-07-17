@@ -1,11 +1,12 @@
 const { model } = require('mongoose')
-const modelBarang = require('../model/barangModel')
+const barangModel = require('../model/barangModel')
 const mongoose = require('mongoose')
 const objectId = mongoose.Types.ObjectId
 
+
 exports.inputBarang = (data) =>
     new Promise(async(resolve, reject) => {
-        await modelBarang.create(data)
+        await barangModel.create(data)
             .then(() => {
                 resolve ({
                     status: true,
@@ -21,7 +22,18 @@ exports.inputBarang = (data) =>
 
 exports.getAllBarang = () =>
     new Promise(async(resolve, reject) => {
-        modelBarang.find({})
+        barangModel.aggregate([
+            {
+                $lookup:
+                  {
+                    from: "kategoris",
+                    localField: "idKategori",
+                    foreignField: "_id",
+                    as: "kategoriBarang"
+                  }
+             },
+             {$unwind: "$kategoriBarang"}
+        ])
             .then(dataBarang => {
                 if (dataBarang.length > 0) {
                     resolve({
@@ -45,7 +57,19 @@ exports.getAllBarang = () =>
 
 exports.getBarangByName = (name) =>
     new Promise(async(resolve, reject) => {
-        modelBarang.findOne({ namaBarang: name })
+        barangModel.aggregate([ 
+        { $match: {namaBarang: name }},
+        {
+            $lookup:
+              {
+                from: "kategoris",
+                localField: "idKategori",
+                foreignField: "_id",
+                as: "kategoriBarang"
+              }
+         },
+         {$unwind: "$kategoriBarang"}
+        ])
             .then(dataBarang => {
                 if (dataBarang) {
                     resolve({
@@ -67,10 +91,46 @@ exports.getBarangByName = (name) =>
             })
 })
 
+exports.getBarangById = (id) =>
+    new Promise(async(resolve, reject) => {
+        barangModel.aggregate([ 
+            { $match: {_id: objectId(id) }},
+            {
+                $lookup:
+                  {
+                    from: "kategoris",
+                    localField: "idKategori",
+                    foreignField: "_id",
+                    as: "kategoriBarang"
+                  }
+             },
+             {$unwind: "$kategoriBarang"}
+        ])
+            .then(dataBarang => {
+                if (dataBarang) {
+                    resolve({
+                        status: true,
+                        msg: 'Berhasil Memuat Data',
+                        data: dataBarang
+                    })
+                }else{
+                    reject({
+                        status: false,
+                        msg: 'Tidak Ada Barang' + id
+                    })
+                }
+            }).catch(err => {
+                reject({
+                    status: false,
+                    msg: 'Terjadi Kesalahan Pada Server'
+                })
+            })
+})
+
 
 exports.updateBarang = (id, data) =>
     new Promise(async(resolve, reject) => {
-        modelBarang.updateOne({ _id: objectId(id) }, data)
+        barangModel.updateOne({ _id: objectId(id) }, data)
             .then(() => {
                 resolve ({
                     status: true,
@@ -84,9 +144,25 @@ exports.updateBarang = (id, data) =>
             })
     })
 
+exports.updateGambar = (id, gambar) =>
+new Promise(async(resolve, reject) => {
+    barangModel.updateOne({ _id: objectId(id) }, {$set: { gambar: gambar} })
+        .then(() => {
+            resolve ({
+                status: true,
+                msg: 'Berhasil Merubah gambar'
+            })
+        }).catch(err => {
+            reject({
+                status: false,
+                msg: 'Terjadi Kesalahan pada Server'
+            })
+        })
+})
+
 exports.deleteBarang = (id) =>
     new Promise(async(resolve, reject) => {
-        modelBarang.deleteOne({ _id: objectId(id) })
+        barangModel.deleteOne({ _id: objectId(id) })
             .then(() => {
                 resolve ({
                     status: true,

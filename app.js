@@ -10,10 +10,11 @@ app.use(express.urlencoded({ extended:true }))
 
 mongoose.connect(dbConfig.mongoUrl, {
     useUnifiedTopology: true,
-    useNewUrlParser: true
+    useNewUrlParser: true,
 }).then(() => {
     console.log("Connect mongodb")
 }).catch(err =>{
+    console.log("Unconnect mongodb")
     console.log(err)
 })
 
@@ -23,9 +24,12 @@ app.get("/", (req, res) =>{
     })
 })
 
+app.use('/gambar-barang', express.static('public/images'))
 app.use('/users', require('./routes/userRoutes'))
 app.use('/kategori', require('./routes/kategoriRoutes'))
 app.use('/barang', require('./routes/barangRoutes'))
+app.use('/keranjang', require('./routes/keranjangRoutes'))
+app.use('/transaksi', require('./routes/TransaksiRoutes'))
 
 // app.get("/data-mhs", (req, res) =>{
 //     res.json({

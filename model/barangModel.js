@@ -1,7 +1,7 @@
 const mongoose = require ('mongoose')
 const objectId = mongoose.Types.ObjectId
 
-const userModel = mongoose.Schema({
+const barangModel = new mongoose.Schema({
     namaBarang: {
         type: String
     },
@@ -19,4 +19,4 @@ const userModel = mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model('barang', userModel)
+module.exports = mongoose.model('barang', barangModel)
